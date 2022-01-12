@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.oauth-client:google-oauth-client:1.32.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.1.0'
+    testImplementation 'org.springframework:spring-test:5.3.13'
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task sytac(type: Jar) {
+
+    manifest {
+        attributes "Main-Class": "TweetApplication"
+    }
+
+    baseName 'sytac'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest.from jar.manifest
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    with jar
+}
